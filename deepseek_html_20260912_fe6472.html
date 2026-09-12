@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Command Center — How to use it</title>
+<style>
+:root{
+  --bg:#f6f5f2;--surface:#fff;--surface2:#eeece7;--text:#242422;--muted:#74716b;
+  --line:#dedbd4;--blue:#2779d6;--blueSoft:#e7f1fc;--green:#3f9567;--greenSoft:#e7f2eb;
+  --orange:#bb6d2c;--orangeSoft:#fbebdc;--purple:#7559b4;--purpleSoft:#eee9f9;
+  --red:#b34b43;
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#191919;--surface:#222;--surface2:#30302e;--text:#fff;--muted:rgba(255,255,255,.65);
+  --line:rgba(255,255,255,.18);--blue:#67a7ed;--blueSoft:#1e3145;--green:#72bc8f;
+  --greenSoft:#20372a;--orange:#de9255;--orangeSoft:#422d1d;--purple:#b59be8;--purpleSoft:#332943;
+  --red:#e08579}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+.page{max-width:1080px;margin:0 auto;padding:36px 28px 60px}
+
+.title{display:flex;align-items:flex-start;gap:18px;margin-bottom:8px}
+.mark{width:56px;height:56px;border-radius:14px;background:var(--text);color:var(--bg);
+  display:grid;place-items:center;font-weight:900;font-size:22px;flex:none}
+h1{margin:0;font-size:30px;line-height:1.15;letter-spacing:-.02em}
+.sub{margin:6px 0 0;color:var(--muted);font-size:15px;max-width:60ch}
+.rule{height:1px;background:var(--line);margin:28px 0}
+
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);
+  font-weight:850;margin:0 0 16px}
+
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.move{background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:18px 16px;position:relative;display:flex;flex-direction:column;gap:8px}
+.move .n{width:26px;height:26px;border-radius:50%;background:var(--text);color:var(--bg);
+  display:grid;place-items:center;font-weight:900;font-size:13px;flex:none}
+.move b{font-size:15px;line-height:1.25}
+.move p{margin:0;font-size:13px;color:var(--muted);line-height:1.45}
+.move .arrow{position:absolute;right:-9px;top:50%;transform:translateY(-50%);
+  width:18px;height:18px;color:var(--line);font-weight:900;font-size:16px;
+  display:grid;place-items:center;background:var(--bg);z-index:2}
+.move:last-child .arrow{display:none}
+.m-open{border-color:var(--blue);background:var(--blueSoft)}
+.m-open .n{background:var(--blue)}
+.m-mid{border-color:var(--purple);background:var(--purpleSoft)}
+.m-mid .n{background:var(--purple)}
+.m-close{border-color:var(--green);background:var(--greenSoft)}
+.m-close .n{background:var(--green)}
+
+.topbar{margin-top:8px}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
+.chip{border:1px solid var(--line);background:var(--surface2);border-radius:9px;
+  padding:8px 12px;font-weight:750;font-size:13px;position:relative;white-space:nowrap}
+.chip.c-blue{border-color:var(--blue);background:var(--blueSoft);color:var(--blue)}
+.chip.c-green{border-color:var(--green);background:var(--greenSoft);color:var(--green)}
+.chip.c-orange{border-color:var(--orange);background:var(--orangeSoft);color:var(--orange)}
+.chip.c-purple{border-color:var(--purple);background:var(--purpleSoft);color:var(--purple)}
+.chip .num{position:absolute;top:-8px;left:-8px;width:20px;height:20px;border-radius:50%;
+  background:var(--text);color:var(--bg);font-size:11px;font-weight:900;
+  display:grid;place-items:center}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;margin-top:16px}
+.leg{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.45}
+.leg .k{width:22px;height:22px;border-radius:50%;background:var(--surface2);
+  border:1px solid var(--line);display:grid;place-items:center;font-weight:900;
+  font-size:11px;flex:none;margin-top:1px}
+.leg .v{color:var(--muted)}
+.leg .v b{color:var(--text);font-weight:750}
+
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.tab{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 13px}
+.tab .tag{display:inline-block;font-size:10.5px;font-weight:900;letter-spacing:.08em;
+  text-transform:uppercase;padding:3px 8px;border-radius:99px;margin-bottom:8px}
+.t1{background:var(--blueSoft);color:var(--blue)}
+.t2{background:var(--orangeSoft);color:var(--orange)}
+.t3{background:#f5ecd6;color:#8a6a1c}
+.t4{background:var(--purpleSoft);color:var(--purple)}
+.t5{background:var(--greenSoft);color:var(--green)}
+@media(prefers-color-scheme:dark){.t3{background:#3a2f14;color:#d9b567}}
+.tab b{display:block;font-size:14.5px;margin-bottom:4px}
+.tab p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.45}
+.tab .when{display:block;margin-top:8px;font-size:11px;color:var(--muted);font-style:italic}
+
+.mech{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.mc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.mc .ico{font-size:22px;margin-bottom:8px;display:block}
+.mc b{font-size:14.5px;display:block;margin-bottom:5px}
+.mc p{margin:0;font-size:13px;color:var(--muted);line-height:1.5}
+
+.escape{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.esc{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:14px;border-left:4px solid var(--line)}
+.esc.e1{border-left-color:var(--blue)}
+.esc.e2{border-left-color:var(--purple)}
+.esc.e3{border-left-color:var(--green)}
+.esc.e4{border-left-color:var(--red)}
+.esc b{display:block;font-size:14px;margin-bottom:4px}
+.esc p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.45}
+
+.syncbox{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+.side{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.side h3{margin:0 0 10px;font-size:15px}
+.side ol{margin:0;padding-left:20px;font-size:13.5px;color:var(--muted);line-height:1.6}
+.side ol b{color:var(--text)}
+.side .state{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;font-size:13.5px}
+.side .dot{width:10px;height:10px;border-radius:50%;flex:none;margin-top:5px}
+.dot.off{background:var(--muted)}
+.dot.ok{background:var(--green)}
+.dot.busy{background:var(--orange)}
+.dot.err{background:var(--red)}
+
+.callout{margin-top:24px;padding:18px 20px;border:2px solid var(--blue);
+  background:var(--blueSoft);border-radius:14px;font-size:14.5px;line-height:1.55}
+.callout b{font-weight:850}
+.callout.warn{border-color:var(--orange);background:var(--orangeSoft)}
+.callout.purple{border-color:var(--purple);background:var(--purpleSoft)}
+
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);
+  font-size:12.5px;color:var(--muted);display:flex;justify-content:space-between;
+  flex-wrap:wrap;gap:10px}
+
+@media(max-width:860px){
+  .flow{grid-template-columns:1fr 1fr}
+  .move .arrow{display:none}
+  .tabs{grid-template-columns:1fr 1fr}
+  .mech{grid-template-columns:1fr}
+  .escape{grid-template-columns:1fr 1fr}
+  .legend{grid-template-columns:1fr}
+  .syncbox{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .page{padding:24px 18px 40px}
+  h1{font-size:23px}
+  .flow,.tabs,.escape{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .page{max-width:none;padding:0}
+  .move,.tab,.mc,.esc,.bar,.callout,.side{break-inside:avoid}
+  .rule{margin:18px 0}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="title">
+    <div class="mark">·</div>
+    <div>
+      <h1>Command center — how to use it</h1>
+      <p class="sub">A one-page map. It's a scaffold for time-blindness and task-initiation, not a project manager. Nothing here is graded, and it syncs across your devices.</p>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <h2>The day in five moves</h2>
+  <div class="flow">
+    <div class="move m-open">
+      <span class="n">1</span>
+      <b>Commit 3</b>
+      <p>Hit <em>Choose focus</em>. Pick up to three from <em>Do now</em>. Empty slots are fine. This is the whole plan.</p>
+      <span class="arrow">›</span>
+    </div>
+    <div class="move">
+      <span class="n">2</span>
+      <b>Start one</b>
+      <p>Press ▶ on a focus card. A 25-minute block runs. Keep browsing — the timer keeps its own time.</p>
+      <span class="arrow">›</span>
+    </div>
+    <div class="move m-mid">
+      <span class="n">3</span>
+      <b>When you stick</b>
+      <p>Hit <em>I'm stuck</em> or <em>Body double 5 min</em>. The coach narrows to one 60-second action.</p>
+      <span class="arrow">›</span>
+    </div>
+    <div class="move">
+      <span class="n">4</span>
+      <b>Drift?</b>
+      <p>Tap <em>I drifted</em>. It shows what you were doing. No lecture, no streak lost, no penalty.</p>
+      <span class="arrow">›</span>
+    </div>
+    <div class="move m-close">
+      <span class="n">5</span>
+      <b>Close the day</b>
+      <p>Hit <em>Enough for today</em>. The page dims. Tomorrow starts clean — nothing carries a penalty.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>The whole loop:</b> three tasks, one 25-minute block, close the day. Everything else in the tool is optional on top of that.
+  </div>
+
+  <div class="rule"></div>
+
+  <h2>The top bar, decoded</h2>
+  <div class="topbar">
+    <div class="bar">
+      <div class="chip"><span class="num">1</span>📅 Calendar</div>
+      <div class="chip"><span class="num">2</span>🕐 Clock</div>
+      <div class="chip"><span class="num">3</span>🌤️ Weather</div>
+      <div class="chip c-blue" style="flex:1;min-width:180px"><span class="num">4</span>Quick add — type it before it disappears…</div>
+      <div class="chip"><span class="num">5</span>↩ I drifted</div>
+      <div class="chip c-orange"><span class="num">6</span>🔔 Check-ins</div>
+      <div class="chip c-purple"><span class="num">7</span>☁ Sync</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="leg"><span class="k">1</span><span class="v"><b>Calendar</b> — flip to any day, see what's due. Dots mean something's scheduled.</span></div>
+    <div class="leg"><span class="k">2</span><span class="v"><b>Clock</b> — local time, so you can anchor without leaving the page.</span></div>
+    <div class="leg"><span class="k">3</span><span class="v"><b>Weather</b> — tap to set up once. Seven-day forecast after that.</span></div>
+    <div class="leg"><span class="k">4</span><span class="v"><b>Quick add</b> — natural language. <em>"Dentist tomorrow 3pm"</em>, <em>"Pay rent 15 sep"</em>, <em>"Gym friday"</em>. It parses date, time, and pasted links. Everything lands in <b>Inbox</b>.</span></div>
+    <div class="leg"><span class="k">5</span><span class="v"><b>I drifted</b> — one tap. Shows your committed tasks and which one is active. Built for returning, not for scolding.</span></div>
+    <div class="leg"><span class="k">6</span><span class="v"><b>Check-ins</b> — an hourly nudge: <em>"No wrong answer here. Want to come back, or stop for the day?"</em> Silence it any time.</span></div>
+    <div class="leg"><span class="k">7</span><span class="v"><b>Sync</b> — green means the gist and this device agree. Amber means pushing. Red means click it and check the token. Off means sync is disabled.</span></div>
+  </div>
+
+  <div class="rule"></div>
+
+  <h2>The five tabs</h2>
+  <div class="tabs">
+    <div class="tab">
+      <span class="tag t1">Today</span>
+      <b>Your actual day</b>
+      <p>Reframe card on top, timeline and focus row, coach beside it, strategy tip below. Start here.</p>
+      <span class="when">Morning, and whenever you drift</span>
+    </div>
+    <div class="tab">
+      <span class="tag t2">Matrix</span>
+      <b>Sort the pile</b>
+      <p>Inbox strip on top. Do now · Schedule · Delegate · Parking lot below. Fits one screen. Groups are collapsed by default — expand when you want to look.</p>
+      <span class="when">When everything feels equally urgent</span>
+    </div>
+    <div class="tab">
+      <span class="tag t3">Follow up</span>
+      <b>Ball's not in your court</b>
+      <p>Tasks you're waiting on. Three tiers: set a reminder · nudge them · let it go.</p>
+      <span class="when">Weekly, or when something's stuck</span>
+    </div>
+    <div class="tab">
+      <span class="tag t4">Projects</span>
+      <b>Outcomes, not lists</b>
+      <p>Upgrade a big task, then hit <em>✨ Break down</em> to generate small actions.</p>
+      <span class="when">When a task has refused to move for a week</span>
+    </div>
+    <div class="tab">
+      <span class="tag t5">History</span>
+      <b>Information, not a scoreboard</b>
+      <p>30-day care rhythm, category breakdown, retrospective, day-by-day list, export and restore.</p>
+      <span class="when">Rarely. It's for the long view.</span>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <h2>Things it does differently</h2>
+  <div class="mech">
+    <div class="mc">
+      <span class="ico">⏱️</span>
+      <b>Timers that tell the truth</b>
+      <p>Every countdown is anchored to a real wall-clock end time. Switch tabs, close the laptop — the timer is still right when you come back.</p>
+    </div>
+    <div class="mc">
+      <span class="ico">↩</span>
+      <b>Drift is expected</b>
+      <p>There's a whole button for it. Returning is treated as normal. No streak to break, no chain to lose, no daily reset that erases yesterday.</p>
+    </div>
+    <div class="mc">
+      <span class="ico">🛑</span>
+      <b>Stopping is a supported action</b>
+      <p>"Enough for today" is a first-class button, not the absence of activity. The day closes with a note, and reopens in one tap if you change your mind.</p>
+    </div>
+    <div class="mc">
+      <span class="ico">💡</span>
+      <b>Every routine has a "why?"</b>
+      <p>Tap it on any care card. It shows the actual reason, and what happens if you skip. Built for a brain that needs the logic before it moves.</p>
+    </div>
+    <div class="mc">
+      <span class="ico">📊</span>
+      <b>Retrospective, not a report card</b>
+      <p>History reads your completion data and extrapolates what consistency actually bought you — calories avoided, minutes of sleep gained, hours of attention rebuilt.</p>
+    </div>
+    <div class="mc">
+      <span class="ico">☁</span>
+      <b>One dashboard, three devices</b>
+      <p>Syncs through a private gist you own. Edit on laptop, open on iPad, refresh on phone — same state, last-write-wins.</p>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <h2>Sync — what it does and doesn't</h2>
+  <div class="syncbox">
+    <div class="side">
+      <h3>How to turn it on</h3>
+      <ol>
+        <li>Click <b>☁ Sync</b> top-right</li>
+        <li>Paste your <b>GitHub token</b> (starts with <code>ghp_</code>)</li>
+        <li>Paste the <b>gist ID</b> — the hex string at the end of the gist URL</li>
+        <li>Tick <b>Enable sync</b></li>
+        <li>Click <b>Test</b> — should say "Connected"</li>
+        <li>Click <b>Save</b></li>
+      </ol>
+    </div>
+    <div class="side">
+      <h3>Button states</h3>
+      <div class="state"><span class="dot off"></span><div><b>☁ Sync</b> (plain) — off. Nothing is saving to cloud.</div></div>
+      <div class="state"><span class="dot busy"></span><div><b>↻ Syncing</b> — pushing right now. Momentary.</div></div>
+      <div class="state"><span class="dot ok"></span><div><b>☁ Synced</b> (green) — this device and the gist match.</div></div>
+      <div class="state"><span class="dot err"></span><div><b>⚠ Sync error</b> (red) — click it. Usually token or gist ID. Rarely, GitHub being slow.</div></div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <b>One honest limit:</b> the Pixel Watch can't run this. Nothing designed for a browser will. If you want your Top 3 on your wrist, the realistic path is to mirror the dashboard into Google Tasks or Todoist, then have the watch show those. That's a separate project.
+  </div>
+
+  <div class="rule"></div>
+
+  <h2>When it goes sideways</h2>
+  <div class="escape">
+    <div class="esc e1">
+      <b>Can't start</b>
+      <p>Tap <em>Make it smaller</em>. It gives you the first 60 seconds of a specific task, not a pep talk.</p>
+    </div>
+    <div class="esc e2">
+      <b>Overwhelmed</b>
+      <p>Tap <em>Slow breaths</em>. 4-6-8 protocol, six rounds. Stop any time.</p>
+    </div>
+    <div class="esc e3">
+      <b>Task won't move</b>
+      <p>Open it (double-click in Matrix) → <em>Upgrade to project</em> → <em>Break into steps</em>. Eight small actions beat one big one.</p>
+    </div>
+    <div class="esc e4">
+      <b>It's bigger than tasks</b>
+      <p>Type what's real into the coach. If it's crisis language, it stops coaching and shows real numbers. That's not a feature — it's the floor.</p>
+    </div>
+  </div>
+
+  <div class="callout purple">
+    <b>One rule:</b> the tool works when you open it, and doesn't when you don't. That's not a moral failure — it's the actual constraint. If three days go by without opening it, open it today. Nothing is lost, nothing is behind.
+  </div>
+
+  <div class="foot">
+    <span>Command center · how to use it</span>
+    <span>Open: anuragmardia.github.io/command-center</span>
+  </div>
+
+</div>
+</body>
+</html>
